@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,5 +27,16 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
+
+});
+
+Route::group([
+
+    'middleware' => 'api'
+
+], function ($router) {
+
+    Route::post('roles', [RoleController::class, 'create']);
+    Route::put('roles/{id}', [RoleController::class, 'addPermission']);
 
 });
