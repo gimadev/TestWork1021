@@ -9,6 +9,8 @@ use App\Repositories\Interfaces\PermissionRepositoryInterface;
 use App\Repositories\PermissionRepositoryDb;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\UserRepositoryDb;
+use App\Repositories\Interfaces\PostRepositoryInterface;
+use App\Repositories\PostRepositoryDb;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             UserRepositoryInterface::class,
             UserRepositoryDb::class
+        );
+
+        $this->app->bind(
+            PostRepositoryInterface::class,
+            PostRepositoryDb::class
         );
     }
 }

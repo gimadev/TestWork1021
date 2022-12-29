@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use Exception;
+use Illuminate\Validation\ValidationException;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -28,6 +28,8 @@ class RoleController extends Controller
             $this->repository->create($validated);
 
             return response()->json(['message' => 'Role is created']);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()]);
         } catch (Exception $e) {
             logger()->error($e->getMessage());
             return response()->json(['error' => 'Server error'], 500);
@@ -46,7 +48,8 @@ class RoleController extends Controller
             $this->repository->addPermission($validated['id'], $validated['permission']);
 
             return response()->json(['message' => 'Permission added']);
-            
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()]);
         } catch (Exception $e) {
             logger()->error($e->getMessage());
             return response()->json(['error' => 'Server error'], 500);
