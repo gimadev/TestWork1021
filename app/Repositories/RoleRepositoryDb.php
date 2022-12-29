@@ -7,14 +7,12 @@ use App\Models\Permission;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use Exception;
 
-class RoleRepository implements RoleRepositoryInterface
+class RoleRepositoryDb implements RoleRepositoryInterface
 {
 
-    public function save($name)
+    public function create($data)
     {
-        $role = new Role();
-        $role->name = $name;
-        $role->save();
+        return Role::create($data);
     }
 
     public function addPermission($role_id, $permission)
@@ -22,18 +20,25 @@ class RoleRepository implements RoleRepositoryInterface
         $role = Role::find($role_id);
         $permission = Permission::where('name', $permission)->first();
 
-        if (empty($role) || empty($permission)) {
-            throw new Exception('Input data is incorrect');
-        }
-
-        $filtered = $role->permissions->filter(function ($value, $key) use($permission) {
+        $role_permission = $role->permissions->first(function ($value, $key) use($permission) {
             return $value->id == $permission->id;
         });
 
         // Проверка существования разрешения для роли, добавляем только если отсутствует
-        if($filtered->count() == 0) {
+        if(empty($role_permission)) {
             $role->permissions()->attach($permission->id);
         }
 
     }
+
+    public function getRoles()
+    {
+        return Role::all();
+    }
+
+    public function getRoleByName($name)
+    {
+        return Role::where('name', $name)->first();
+    }
+
 }

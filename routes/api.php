@@ -36,7 +36,7 @@ Route::group([
 
 ], function ($router) {
 
-    Route::post('roles', [RoleController::class, 'create']);
-    Route::put('roles/{id}', [RoleController::class, 'addPermission']);
+    Route::post('roles', [RoleController::class, 'create'])->middleware('permission:edit_role');
+    Route::put('roles', [RoleController::class, 'update'])->middleware('permission:edit_role');
 
 });

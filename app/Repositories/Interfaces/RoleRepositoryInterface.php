@@ -4,7 +4,12 @@ namespace App\Repositories\Interfaces;
 
 interface RoleRepositoryInterface
 {
-    public function save($name);
+    public function create($data);
 
     public function addPermission($role_id, $permission);
+
+    public function getRoles();
+
+    public function getRoleByName($name);
+
 }

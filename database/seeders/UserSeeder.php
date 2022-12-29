@@ -5,9 +5,22 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\RoleRepositoryInterface;
 
 class UserSeeder extends Seeder
 {
+
+    protected $repository;
+
+    protected $role_repository;
+
+    public function __construct(UserRepositoryInterface $repository, RoleRepositoryInterface $role_repository)
+    {
+        $this->repository = $repository;
+        $this->role_repository = $role_repository;
+    }
+
     /**
      * Run the database seeds.
      *
@@ -15,25 +28,28 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $user = new User();
-        $user->name = "Admin";
-        $user->email = "admin@gmail.com";
-        $user->password = bcrypt("secret");
-        $user->save();
 
-        $roles = Role::all();
+        $user = $this->repository->create([
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('secret')
+        ]);
 
-        foreach($roles as $role) {
-            $user->roles()->attach($role->id);
+        $roles = $this->role_repository->getRoles();
+
+        // Админу добавляем все роли
+        foreach ($roles as $role) {
+            $this->repository->addRole($user->id, $role->id);
         }
 
-        $user = new User();
-        $user->name = "Editor";
-        $user->email = "editor@gmail.com";
-        $user->password = bcrypt("secret2");
-        $user->save();
+        $user = $this->repository->create([
+            'name' => 'Editor',
+            'email' => 'editor@gmail.com',
+            'password' => bcrypt('secret2')
+        ]);
 
-        $role = Role::where('name','editor')->first();
-        $user->roles()->attach($role->id);
+        $role = $this->role_repository->getRoleByName('editor');
+
+        $this->repository->addRole($user->id, $role->id);
     }
 }

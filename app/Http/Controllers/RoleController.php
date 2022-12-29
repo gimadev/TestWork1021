@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use Exception;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
+use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
@@ -16,16 +17,15 @@ class RoleController extends Controller
         $this->repository = $repository;
     }
 
-    public function create()
+    public function create(Request $request)
     {
         try {
-            $name = request('name');
 
-            if (empty($name)) {
-                throw new Exception('Role name is empty');
-            }
+            $validated = $request->validate([
+                'name' => 'required|unique:roles|max:255'
+            ]);
 
-            $this->repository->save($name);
+            $this->repository->create($validated);
 
             return response()->json(['message' => 'Role is created']);
         } catch (Exception $e) {
@@ -34,20 +34,19 @@ class RoleController extends Controller
         }
     }
 
-    public function addPermission()
+    public function update(Request $request)
     {
         try {
-            $role_id = request('id');
-            $permission = request('permission');
 
-            if (empty($role_id) || empty($permission)) {
-                throw new Exception('Input data is incorrect');
-            }
+            $validated = $request->validate([
+                'id' => 'required|integer|exists:roles',
+                'permission' => 'required|max:255|exists:permissions,name'
+            ]);
 
-            $this->repository->addPermission($role_id, $permission);
+            $this->repository->addPermission($validated['id'], $validated['permission']);
 
             return response()->json(['message' => 'Permission added']);
-
+            
         } catch (Exception $e) {
             logger()->error($e->getMessage());
             return response()->json(['error' => 'Server error'], 500);
