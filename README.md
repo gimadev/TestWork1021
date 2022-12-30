@@ -32,6 +32,12 @@ php artisan db:seed
 
 ```
 
-6. После этого можно прогнать тесты из Postman коллекции (файл коллекции в корне проекта, TestWorkApi.postman_collection.json)
+6. Запустить тестовый сервер:
+```
+php artisan serve
+
+```
+
+7. После этого можно прогнать тесты из Postman коллекции (файл коллекции в корне проекта, TestWorkApi.postman_collection.json)
 
 
