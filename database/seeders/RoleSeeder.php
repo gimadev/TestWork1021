@@ -38,10 +38,5 @@ class RoleSeeder extends Seeder
             $this->role_repository->addPermission($role->id, $permission->name);
         }
 
-        $role = $this->role_repository->create([
-            'name' => 'editor'
-        ]);
-
-        $this->role_repository->addPermission($role->id, 'edit_post');
     }
 }

@@ -22,7 +22,7 @@ class PostController extends Controller
         try {
 
             $validated = $request->validate([
-                'title' => 'required|unique:posts|max:255',
+                'title' => 'required|max:255',
                 'content' => 'required'
             ]);
 
@@ -48,7 +48,7 @@ class PostController extends Controller
     {
         try {
             $validated = $request->validate([
-                'title' => 'required_without:content|unique:posts|max:255',
+                'title' => 'required_without:content|max:255',
                 'content' => 'required_without:title'
             ]);
 

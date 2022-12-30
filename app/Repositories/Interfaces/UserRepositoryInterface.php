@@ -6,7 +6,9 @@ interface UserRepositoryInterface
 {
     public function create($data);
 
-    public function addRole($user_id, $role_id);
+    public function addRole($email, $role_id);
 
     public function getUserById($id);
+
+    public function getUserByEmail($email);
 }

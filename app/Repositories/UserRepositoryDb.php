@@ -13,19 +13,18 @@ class UserRepositoryDb implements UserRepositoryInterface
         return User::create($data);
     }
 
-    public function addRole($user_id, $role_id)
+    public function addRole($email, $role_id)
     {
-        $user = $this->getUserById($user_id);
+        $user = $this->getUserByEmail($email);
 
         if($user) {
 
-            $role = $user->roles->first(function ($role, $key) use($role_id) {
-                return $role->id == $role_id;
-            });
+            $role = $user->roles->firstWhere('id', $role_id);
 
             // Проверка существования роли у пользователя, добавляем только если отсутствует
             if(empty($role)) {
                 $user->roles()->attach($role_id);
+                return true;
             }
         }
     }
@@ -33,6 +32,11 @@ class UserRepositoryDb implements UserRepositoryInterface
     public function getUserById($id)
     {
         return User::find($id);
+    }
+
+    public function getUserByEmail($email)
+    {
+        return User::where('email', $email)->first();
     }
 
 }

@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
 
         // Админу добавляем все роли
         foreach ($roles as $role) {
-            $this->repository->addRole($user->id, $role->id);
+            $this->repository->addRole($user->email, $role->id);
         }
 
         $user = $this->repository->create([
@@ -48,8 +48,5 @@ class UserSeeder extends Seeder
             'password' => bcrypt('secret2')
         ]);
 
-        $role = $this->role_repository->getRoleByName('editor');
-
-        $this->repository->addRole($user->id, $role->id);
     }
 }

@@ -41,4 +41,14 @@ class RoleRepositoryDb implements RoleRepositoryInterface
         return Role::where('name', $name)->first();
     }
 
+    public function delete($name)
+    {
+        $role = $this->getRoleByName($name);
+
+        if($role) {
+            return $role->delete();
+        }
+
+    }
+
 }

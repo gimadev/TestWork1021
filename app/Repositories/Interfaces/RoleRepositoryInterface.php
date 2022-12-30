@@ -12,4 +12,6 @@ interface RoleRepositoryInterface
 
     public function getRoleByName($name);
 
+    public function delete($name);
+
 }
