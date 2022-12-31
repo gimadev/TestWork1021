@@ -19,92 +19,55 @@ class PostController extends Controller
 
     public function create(Request $request)
     {
-        try {
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required'
+        ]);
 
-            $validated = $request->validate([
-                'title' => 'required|max:255',
-                'content' => 'required'
-            ]);
+        $validated['user_id'] = $request->user()->id;
 
-            $validated['user_id'] = $request->user()->id;
+        $post = $this->repository->create($validated);
 
-            $post = $this->repository->create($validated);
-
-            return response()->json([
-                'message' => 'Post is created',
-                'id' => $post->id
-            ]);
-        } catch (ValidationException $e) {
-
-            return response()->json(['error' => $e->getMessage()]);
-        } catch (Exception $e) {
-
-            logger()->error($e->getMessage());
-            return response()->json(['error' => 'Server error'], 500);
-        }
+        return response()->json([
+            'message' => 'Post is created',
+            'id' => $post->id
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        try {
-            $validated = $request->validate([
-                'title' => 'required_without:content|max:255',
-                'content' => 'required_without:title'
-            ]);
+        $validated = $request->validate([
+            'title' => 'required_without:content|max:255',
+            'content' => 'required_without:title'
+        ]);
 
-            $res = $this->repository->update($id, $validated);
+        $res = $this->repository->update($id, $validated);
 
-            return response()->json([
-                'message' => 'Post update',
-                'res' => $res
-            ]);
-        } catch (ValidationException $e) {
-
-            return response()->json(['error' => $e->getMessage()]);
-        } catch (Exception $e) {
-
-            logger()->error($e->getMessage());
-            return response()->json(['error' => 'Server error'], 500);
-        }
+        return response()->json([
+            'message' => 'Post update',
+            'res' => $res
+        ]);
     }
 
     public function list()
     {
-        try {
-
-            $posts = $this->repository->getPosts();
-            return response()->json($posts);
-        } catch (Exception $e) {
-            logger()->error($e->getMessage());
-            return response()->json(['error' => 'Server error'], 500);
-        }
+        $posts = $this->repository->getPosts();
+        return response()->json($posts);
     }
 
     public function post($id)
     {
-        try {
-
-            $post = $this->repository->getById($id);
-            return response()->json($post);
-        } catch (Exception $e) {
-            logger()->error($e->getMessage());
-            return response()->json(['error' => 'Server error'], 500);
-        }
+        $post = $this->repository->getById($id);
+        return response()->json($post);
     }
 
     public function delete($id)
     {
-        try {
+        $res = $this->repository->delete($id);
 
-            $res = $this->repository->delete($id);
-
-            return response()->json([
-                'message' => 'Post delete',
-                'res' => $res
-            ]);
-        } catch (Exception $e) {
-            logger()->error($e->getMessage());
-            return response()->json(['error' => 'Server error'], 500);
-        }
+        return response()->json([
+            'message' => 'Post delete',
+            'res' => $res
+        ]);
     }
 }

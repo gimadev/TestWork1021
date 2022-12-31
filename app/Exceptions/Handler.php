@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Exception;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -37,5 +40,24 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof ValidationException) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+
+        if ($e instanceof MethodNotAllowedHttpException) {
+            logger()->error($e->getMessage());
+            return response()->json(['error' => 'Server error'], 500);
+        }
+
+        if ($e instanceof Exception) {
+            logger()->error($e->getMessage());
+            return response()->json(['error' => 'Server error'], 500);
+        }
+
+        return parent::render($request, $e);
     }
 }

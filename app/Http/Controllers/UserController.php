@@ -20,29 +20,21 @@ class UserController extends Controller
     // метод для обновления данных пользователя, в том числе добавления ролей пользователю
     public function update(Request $request)
     {
-        try {
+        if ($request->has('role_id')) {
 
-            if ($request->has('role_id')) {
+            $validated = $request->validate([
+                'role_id' => 'integer|exists:roles,id',
+                'email' => 'required|email|exists:users'
+            ]);
 
-                $validated = $request->validate([
-                    'role_id' => 'integer|exists:roles,id',
-                    'email' => 'required|email|exists:users'
-                ]);
+            $res = $this->repository->addRole($validated['email'], $validated['role_id']);
 
-                $res = $this->repository->addRole($validated['email'], $validated['role_id']);
-
-                return response()->json([
-                    'message' => 'Add role for user',
-                    'res' => $res
-                ]);
-            }
-
-            return response()->json(['error' => 'Not found'], 404);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        } catch (Exception $e) {
-            logger()->error($e->getMessage());
-            return response()->json(['error' => 'Server error'], 500);
+            return response()->json([
+                'message' => 'Add role for user',
+                'res' => $res
+            ]);
         }
+
+        return response()->json(['error' => 'Not found'], 404);
     }
 }
